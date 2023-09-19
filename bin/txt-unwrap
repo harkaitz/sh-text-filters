@@ -1,0 +1,18 @@
+#!/bin/sh -e
+##:
+#h: Usage: clip % | txt-unwrap | clip -
+#h:
+#h: Remove "in paragraph" newlines.
+##:
+txt_unwrap() {
+    sed '/^\s*$/s|^|<line>|g' \
+        | tr '\n' ' '         \
+        | sed 's|\s\s*| |g'   \
+        | sed 's|\s*<line>\s*|\n\n|g'
+}
+if test @"$(basename "$0")" = @"txt-unwrap";then
+    case "${1}" in
+        -h|--help) sed -n 's/^ *#h: \{0,1\}//p' "$0";;
+        *)         txt_unwrap "$@"; exit 0;;
+    esac
+fi
