@@ -1,0 +1,28 @@
+#!/bin/sh -e
+##:
+#h: Usage: ff-blocks BLOCK < FILE-LIST
+#h:
+#h: Print code sections between "-- BLOCK --" in input files.
+##:
+ff_blocks() {
+    local f b="$1"
+    while read -r f; do
+        if ! grep -q ".- ${b} --" "${f}"; then
+            continue
+        fi
+        echo "[${f}]"
+        cat -n "${f}" | sed -n "
+            /-- ${b} --/,/-- ${b} --/{
+                s|.*-- ${b} --.*||
+                s|\\t*||
+                p
+            }
+        "
+    done
+}
+if test @"$(basename "$0")" = @"ff-blocks";then
+    case "${1}" in
+        ''|-h|--help) sed -n 's/^ *#h: \{0,1\}//p' "$0";;
+        *)            ff_blocks "$@"; exit 0;;
+    esac
+fi

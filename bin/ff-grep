@@ -1,0 +1,17 @@
+#!/bin/sh -e
+##:
+#h: Usage: ff-grep REGEX < FILES
+##:
+ff_grep() {
+    if test ! -n "$1"; then
+        echo >&2 "error: Specify a PATTERN."
+        return 1
+    fi
+    xargs -n 1 grep -Hin "$1" 2>/dev/null
+}
+if test @"$(basename "$0")" = @"ff-grep";then
+    case "${1}" in
+        ''|-h|--help) sed -n 's/^ *#h: \{0,1\}//p' "$0" ;;
+        *)            ff_grep "$@"; exit 0;;
+    esac
+fi
